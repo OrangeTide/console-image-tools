@@ -1,0 +1,29 @@
+nesradtools 0.1
+===============
+
+Package Overview
+----------------
+
+  chrtopng - takes a CHR file and turns it into a PNG of sprites.
+
+  pngtochr - takes a PNG of any size and turns it into a CHR file of sprites.
+
+  nessplit - takes an iNES file and turns it into a PRG and CHR file.
+
+
+Building & Installation
+-----------------------
+
+Requirements to build:
+  libpng
+  pkg-config
+  autoconf
+  automake
+
+Building:
+  if configure file is not present run 'autoreconf'
+  run ./configure
+  run make
+
+
+

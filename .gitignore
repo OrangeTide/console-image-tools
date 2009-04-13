@@ -1,0 +1,25 @@
+## general things to always ignore
+*.o
+*~
+.*.swp
+
+## ignore some executables
+*.exe
+*.dll
+
+## autoconf / automake generated stuff
+.deps
+aclocal.m4
+autom4te.cache
+config.cache
+config.guess
+config.log
+config.status
+configure
+depcomp
+install-sh
+ltmain.sh
+missing
+mkinstalldirs
+Makefile.in
+Makefile

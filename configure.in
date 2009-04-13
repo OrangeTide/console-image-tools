@@ -1,0 +1,26 @@
+AC_INIT([nesradtools], [0.1], [jon.mayo@gmail.com])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+
+dnl We use C
+AC_PROG_CC
+AC_LANG_C
+
+AC_PROG_MAKE_SET
+
+AC_HEADER_STDC
+
+VERSION="0.1"
+AC_SUBST(VERSION)
+
+PKG_PROG_PKG_CONFIG(0.1)
+
+PKG_CHECK_MODULES(PNG, libpng,
+	have_libpng="yes",
+	have_libpng="no (usable libpng not found)"
+)
+AM_CONDITIONAL(HAVE_PNG, test "x$have_libpng" = "xyes")
+
+AC_SUBST(PNG_CFLAGS)
+AC_SUBST(PNG_LIBS)
+
+AC_OUTPUT(Makefile src/Makefile)
