@@ -1,4 +1,4 @@
-AC_INIT([nesradtools], [0.1], [jon.mayo@gmail.com])
+AC_INIT([console-image-tools], [0.2], [jon.mayo@gmail.com])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 dnl We use C
