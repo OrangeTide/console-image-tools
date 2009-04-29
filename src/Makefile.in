@@ -30,7 +30,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = pngtochr$(EXEEXT) chrtopng$(EXEEXT) nessplit$(EXEEXT)
+bin_PROGRAMS = pngtochr$(EXEEXT) chrtopng$(EXEEXT) nessplit$(EXEEXT) \
+	nescombine$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -47,6 +48,10 @@ am_chrtopng_OBJECTS = chrtopng.$(OBJEXT) image.$(OBJEXT) \
 chrtopng_OBJECTS = $(am_chrtopng_OBJECTS)
 chrtopng_LDADD = $(LDADD)
 chrtopng_DEPENDENCIES =
+am_nescombine_OBJECTS = nescombine.$(OBJEXT) util.$(OBJEXT)
+nescombine_OBJECTS = $(am_nescombine_OBJECTS)
+nescombine_LDADD = $(LDADD)
+nescombine_DEPENDENCIES =
 am_nessplit_OBJECTS = nessplit.$(OBJEXT) util.$(OBJEXT)
 nessplit_OBJECTS = $(am_nessplit_OBJECTS)
 nessplit_LDADD = $(LDADD)
@@ -63,9 +68,10 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(chrtopng_SOURCES) $(nessplit_SOURCES) $(pngtochr_SOURCES)
-DIST_SOURCES = $(chrtopng_SOURCES) $(nessplit_SOURCES) \
-	$(pngtochr_SOURCES)
+SOURCES = $(chrtopng_SOURCES) $(nescombine_SOURCES) \
+	$(nessplit_SOURCES) $(pngtochr_SOURCES)
+DIST_SOURCES = $(chrtopng_SOURCES) $(nescombine_SOURCES) \
+	$(nessplit_SOURCES) $(pngtochr_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -163,6 +169,7 @@ AM_CPPFLAGS = @PNG_CFLAGS@ -DNTRACE -DNDEBUG
 pngtochr_SOURCES = pngtochr.c image.c util.c
 chrtopng_SOURCES = chrtopng.c image.c util.c
 nessplit_SOURCES = nessplit.c util.c
+nescombine_SOURCES = nescombine.c util.c
 all: all-am
 
 .SUFFIXES:
@@ -222,6 +229,9 @@ clean-binPROGRAMS:
 chrtopng$(EXEEXT): $(chrtopng_OBJECTS) $(chrtopng_DEPENDENCIES) 
 	@rm -f chrtopng$(EXEEXT)
 	$(LINK) $(chrtopng_OBJECTS) $(chrtopng_LDADD) $(LIBS)
+nescombine$(EXEEXT): $(nescombine_OBJECTS) $(nescombine_DEPENDENCIES) 
+	@rm -f nescombine$(EXEEXT)
+	$(LINK) $(nescombine_OBJECTS) $(nescombine_LDADD) $(LIBS)
 nessplit$(EXEEXT): $(nessplit_OBJECTS) $(nessplit_DEPENDENCIES) 
 	@rm -f nessplit$(EXEEXT)
 	$(LINK) $(nessplit_OBJECTS) $(nessplit_LDADD) $(LIBS)
@@ -237,6 +247,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chrtopng.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/image.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nescombine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nessplit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngtochr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Po@am__quote@
