@@ -52,7 +52,9 @@ static unsigned get_pixel(const struct image *img, unsigned x, unsigned y) {
 static unsigned get_pixel_planar(const unsigned char *ptr, unsigned bpp, size_t len, unsigned w, unsigned x, unsigned y, unsigned endian) {
 	unsigned i, g, pixel_index;
 
-	// TRACE("x:%u y:%u bpp:%u w:%u len:%lu\n", x, y, bpp, w, len);
+#if 0 /* diagnostic junk */
+	TRACE("x:%u y:%u bpp:%u w:%u len:%lu\n", x, y, bpp, w, len);
+#endif
 	assert(bpp > 0 && bpp <= 32);
 	assert(y < len*w/bpp);
 
@@ -61,7 +63,7 @@ static unsigned get_pixel_planar(const unsigned char *ptr, unsigned bpp, size_t 
 	x/=8;
 
 	/* this works out to swap bytes because of the planar nature */
-	if(endian)
+	if((w*bpp)/8>1 && endian)
 		pixel_index^=1<<bpp;
 
 	ptr=ptr+x+y*((w+7)/8); /* treat as 1bpp for rowbytes */
@@ -70,7 +72,9 @@ static unsigned get_pixel_planar(const unsigned char *ptr, unsigned bpp, size_t 
 		g<<=1;
 		g|=(*ptr>>pixel_index)&1;
 	}
-	// TRACE("(%u,%u)=0x%x pi=%d ptr=%p w=%d\n", x*8+pixel_index, y, g, pixel_index, ptr, w);
+#if 0 /* diagnostic junk */
+	TRACE("(%u,%u)=0x%x pi=%d ptr=%p w=%d\n", x*8+pixel_index, y, g, pixel_index, ptr, w);
+#endif
 	return g;
 }
 
@@ -302,10 +306,10 @@ int load_chr(const char *filename, struct image *img, unsigned tile_width, unsig
 		fprintf(stderr, "%s:Could not create image (%ux%u,%u).\n", filename, width, height, bpp);
 		goto failure;
 	}
-	DEBUG("Creating image %ux%u,%ubpp\n", img->xres, img->yres, img->bpp);
+	DEBUG("Loading image %ux%u,%ubpp\n", img->xres, img->yres, img->bpp);
 
 	/* convert the planar input data into regular data */
-	TRACE("tiles = %d\n", height/tile_height);
+	TRACE("tiles = %d\n", len/tilebytes);
 	for(currtile=inbuf,i=0;i<len/tilebytes;i++,currtile+=tilebytes) {
 		size_t ofs;
 		unsigned g, x, y;
