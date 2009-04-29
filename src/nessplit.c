@@ -36,12 +36,16 @@ static int read_ines_hdr(FILE *in, struct ines_hdr *hdr) {
 	if(hdr) {
 		hdr->prg_rom_size=buf[4]*16384l;
 		hdr->chr_rom_size=buf[5]*8192l;
-		hdr->trainer_fl=(buf[6]>>2)&1;
+		hdr->trainer_fl=(buf[6]>>6)&1; /* 512-byte trainer is before the PRG ROM */
 	}
 
-	fprintf(stderr, "PRG-ROM %ld\n", buf[4]*16384l);
-	fprintf(stderr, "CHR-ROM %ld\n", buf[5]*8192l);
-	fprintf(stderr, "Trainer=%d\n", (buf[6]>>2)&1);
+	fprintf(stderr, "  PRG-ROM %ld\n", buf[4]*16384l);
+	fprintf(stderr, "  CHR-ROM %ld\n", buf[5]*8192l);
+	fprintf(stderr, "  Mapper=%d (extended: %d)\n", buf[6]&15, buf[7]);
+	fprintf(stderr, "  Trainer=%d\n", hdr->trainer_fl);
+	fprintf(stderr, "  Mirroring=%d\n", (buf[6]>>4)&1);
+	fprintf(stderr, "  Battery=%d\n", (buf[6]>>5)&1);
+	fprintf(stderr, "  4-screen VRAM=%d\n", (buf[6]>>7)&1);
 
 	return 1;
 }
