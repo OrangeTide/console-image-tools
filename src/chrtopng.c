@@ -148,19 +148,27 @@ main(int argc, char **argv)
 
 	TRACE("opts: %ux%u@%u '%s'\n", prog_opts.tile_w, prog_opts.tile_h, prog_opts.in_bpp, prog_opts.out_filename);
 
-	for (i=optind; i<argc; i++)
+	if (optind==argc)
 	{
-		if (!load_chr(argv[i], &curr_img, prog_opts.tile_w, prog_opts.tile_h, prog_opts.in_bpp, prog_opts.tiles_per_row))
+		usage();	
+		return EXIT_FAILURE;
+	}
+	else 
+	{
+		for (i=optind; i<argc; i++)
 		{
-			fprintf(stderr, "Could not load image '%s'\n", argv[i]);
-			return EXIT_FAILURE;
+			if (!load_chr(argv[i], &curr_img, prog_opts.tile_w, prog_opts.tile_h, prog_opts.in_bpp, prog_opts.tiles_per_row))
+			{
+				fprintf(stderr, "Could not load image '%s'\n", argv[i]);
+				return EXIT_FAILURE;
+			}
+			if (!save_png(prog_opts.out_filename, &curr_img))
+			{
+				fprintf(stderr, "Could not write image '%s'\n", prog_opts.out_filename);
+				return EXIT_FAILURE;
+			}
+			image_destroy(&curr_img);
 		}
-		if (!save_png(prog_opts.out_filename, &curr_img))
-		{
-			fprintf(stderr, "Could not write image '%s'\n", prog_opts.out_filename);
-			return EXIT_FAILURE;
-		}
-		image_destroy(&curr_img);
 	}
 
 	return EXIT_SUCCESS;

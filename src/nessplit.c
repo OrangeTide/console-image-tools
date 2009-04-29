@@ -90,7 +90,10 @@ int main(int argc, char **argv) {
 	struct ines_hdr hdr;
 	char chr_filename[512], prg_filename[512];
 
-	for(i=1;i<argc;i++) {
+	if (argc==1) {
+		fprintf(stderr, "usage: nessplit [file.nes ...]\nSplits iNES files into CHR and PRG.\n");
+		return EXIT_FAILURE;
+	} else for(i=1;i<argc;i++) {
 		printf("** %s\n", argv[i]);
 		f=fopen(argv[i], "rb");
 		if(!f) {
