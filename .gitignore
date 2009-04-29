@@ -9,7 +9,7 @@
 
 ## autoconf / automake generated stuff
 .deps
-aclocal.m4
+#aclocal.m4
 autom4te.cache
 config.cache
 config.guess
