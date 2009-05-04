@@ -7,6 +7,35 @@
  * cannot split .nes files that have trainers
  *
  */
+/* iNES Format (.NES)
+ *  +--------+------+------------------------------------------+
+ *  | Offset | Size | Content(s)                               |
+ *  +--------+------+------------------------------------------+
+ *  |   0    |  3   | 'NES'                                    |
+ *  |   3    |  1   | $1A                                      |
+ *  |   4    |  1   | 16K PRG-ROM page count                   |
+ *  |   5    |  1   | 8K CHR-ROM page count                    |
+ *  |   6    |  1   | ROM Control Byte #1                      |
+ *  |        |      |   %####vTsM                              |
+ *  |        |      |    |  ||||+- 0=Horizontal Mirroring      |
+ *  |        |      |    |  ||||   1=Vertical Mirroring        |
+ *  |        |      |    |  |||+-- 1=SRAM enabled              |
+ *  |        |      |    |  ||+--- 1=512-byte trainer present  |
+ *  |        |      |    |  |+---- 1=Four-screen VRAM layout   |
+ *  |        |      |    |  |                                  |
+ *  |        |      |    +--+----- Mapper # (lower 4-bits)     |
+ *  |   7    |  1   | ROM Control Byte #2                      |
+ *  |        |      |   %####0000                              |
+ *  |        |      |    |  |                                  |
+ *  |        |      |    +--+----- Mapper # (upper 4-bits)     |
+ *  |  8-15  |  8   | $00                                      |
+ *  | 16-..  |      | Actual 16K PRG-ROM pages (in linear      |
+ *  |  ...   |      | order). If a trainer exists, it precedes |
+ *  |  ...   |      | the first PRG-ROM bank.                  |
+ *  | ..-EOF |      | CHR-ROM pages (in ascending order).      |
+ *  +--------+------+------------------------------------------+
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -18,16 +47,19 @@ struct ines_hdr {
 	size_t prg_rom_size;
 	size_t chr_rom_size;
 	unsigned trainer_fl;
+	unsigned mapper, mirroring;
 };
 
+static int verbose_fl=1;
+
 static int read_ines_hdr(FILE *in, struct ines_hdr *hdr) {
-	unsigned i;
 	uint8_t buf[16];
+
 	if(fread(buf, 1l, sizeof buf, in)!=sizeof buf) {
 		fprintf(stderr, "Truncated file.\n");
 		return 0;
 	}
-	i=0;
+
 	if(buf[0]!='N' || buf[1]!='E' || buf[2]!='S' || buf[3]!=0x1a) {
 		fprintf(stderr, "Not an iNES file.\n");
 		return 0;
@@ -36,16 +68,22 @@ static int read_ines_hdr(FILE *in, struct ines_hdr *hdr) {
 	if(hdr) {
 		hdr->prg_rom_size=buf[4]*16384l;
 		hdr->chr_rom_size=buf[5]*8192l;
-		hdr->trainer_fl=(buf[6]>>6)&1; /* 512-byte trainer is before the PRG ROM */
+		hdr->trainer_fl=(buf[6]>>2)&1; /* 512-byte trainer is before the PRG ROM */
+		hdr->mapper=((buf[6]>>4)&15)|(buf[7]&0xf0);
+		hdr->mirroring=buf[6]&3;
 	}
 
-	fprintf(stderr, "  PRG-ROM %ld\n", buf[4]*16384l);
-	fprintf(stderr, "  CHR-ROM %ld\n", buf[5]*8192l);
-	fprintf(stderr, "  Mapper=%d (extended: %d)\n", buf[6]&15, buf[7]);
-	fprintf(stderr, "  Trainer=%d\n", hdr->trainer_fl);
-	fprintf(stderr, "  Mirroring=%d\n", (buf[6]>>4)&1);
-	fprintf(stderr, "  Battery=%d\n", (buf[6]>>5)&1);
-	fprintf(stderr, "  4-screen VRAM=%d\n", (buf[6]>>7)&1);
+	if(verbose_fl>1)
+		fprintf(stderr, "  header: %02hhx %02hhx %02hhx %02hhx\n", buf[4], buf[5], buf[6], buf[7]);
+	if(hdr) {
+		fprintf(stderr, "  PRG-ROM %ldK\n", hdr->prg_rom_size/1024);
+		fprintf(stderr, "  CHR-ROM %ldK\n", hdr->chr_rom_size/1024);
+		fprintf(stderr, "  Mapper=%d\n", hdr->mapper);
+		fprintf(stderr, "  Trainer=%d\n", hdr->trainer_fl);
+		fprintf(stderr, "  Mirroring=%d\n", hdr->mirroring);
+		fprintf(stderr, "  Battery=%d\n", (buf[6]>>1)&1);
+		fprintf(stderr, "  4-screen VRAM=%d\n", (buf[6]>>3)&1);
+	}
 
 	return 1;
 }
