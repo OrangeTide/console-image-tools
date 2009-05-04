@@ -379,7 +379,7 @@ static int copy_chr_tile(struct image *img, unsigned img_x, unsigned img_y, unsi
 			while(j>0) {
 				j--;
 				/* dest[x/8+y*planar_rowbytes+planar_rowbytes*tile_h*j]|=((g>>j)&1)<<((~x)%8); */
-				dest[x/8+y*planar_rowbytes+planar_rowbytes*tile_h*j]|=((g>>j)&1)<<((~x)%8);
+				dest[x/8+y*planar_rowbytes+planar_rowbytes*tile_h*j]|=((g>>j)&1)<<(x%8);
 			}
 		}
 	}
