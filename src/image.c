@@ -35,7 +35,7 @@ static unsigned get_pixel(const struct image *img, unsigned x, unsigned y) {
 #endif
 
 	pixels_per_byte=8/img->bpp;
-	pixel_index=x%pixels_per_byte; /* which pixel */
+	pixel_index=(~x)%pixels_per_byte; /* which pixel - MSB is the low order pixel */
 	x/=pixels_per_byte;
 
 	/* get the pixel and shuffle it */
@@ -375,11 +375,10 @@ static int copy_chr_tile(struct image *img, unsigned img_x, unsigned img_y, unsi
 	for(y=0;y<tile_h;y++) {
 		for(x=0;x<tile_w;x++) {
 			g=get_pixel(img, img_x+x, img_y+y);
-			j=bpp;
-			while(j>0) {
-				j--;
-				/* dest[x/8+y*planar_rowbytes+planar_rowbytes*tile_h*j]|=((g>>j)&1)<<((~x)%8); */
-				dest[x/8+y*planar_rowbytes+planar_rowbytes*tile_h*j]|=((g>>j)&1)<<(x%8);
+			for(j=0;j<bpp;j++) { /* loop through each bit plane */
+				/* OR in the bit plane data for each bit of the pixel
+				 * most-significant bit is the low order pixel (example 0th px starts on bit 7) */
+				dest[x/8+y*planar_rowbytes+planar_rowbytes*tile_h*j]|=((g>>j)&1)<<((~x)%8);
 			}
 		}
 	}
