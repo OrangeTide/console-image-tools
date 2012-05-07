@@ -1,15 +1,10 @@
-AC_INIT([console-image-tools], [0.2], [jon.mayo@gmail.com])
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
-
-dnl We use C
+AC_INIT([console-image-tools], [0.3], [jon.mayo@gmail.com])
+AC_CANONICAL_HOST
+AM_INIT_AUTOMAKE([foreign dist-zip])
 AC_PROG_CC
-AC_LANG_C
+AC_PROG_RANLIB
 
-AC_PROG_MAKE_SET
-
-AC_HEADER_STDC
-
-VERSION="0.1"
+VERSION="0.3"
 AC_SUBST(VERSION)
 
 PKG_PROG_PKG_CONFIG(0.1)
@@ -23,4 +18,6 @@ AM_CONDITIONAL(HAVE_PNG, test "x$have_libpng" = "xyes")
 AC_SUBST(PNG_CFLAGS)
 AC_SUBST(PNG_LIBS)
 
-AC_OUTPUT(Makefile src/Makefile)
+AC_CHECK_HEADERS([sys/file.h])
+AC_CONFIG_FILES([Makefile src/Makefile])
+AC_OUTPUT

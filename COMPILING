@@ -1,0 +1,9 @@
+Requirements:
+	libpng
+
+To configure and build:
+
+$ autoreconf -i
+$ ./configure
+$ make
+

@@ -1,3 +1,2 @@
-AUTOMAKE_OPTIONS = gnu
+AUTOMAKE_OPTIONS = subdir-objects
 SUBDIRS = src
-EXTRA_DIST = autogen.sh

@@ -9,17 +9,18 @@
 
 ## autoconf / automake generated stuff
 .deps
-#aclocal.m4
+aclocal.m4
 autom4te.cache
 config.cache
 config.guess
 config.log
 config.status
-#configure
-#depcomp
-#install-sh
-#ltmain.sh
-#missing
-#mkinstalldirs
-#Makefile.in
+config.sub
+configure
+depcomp
+install-sh
+ltmain.sh
+missing
+mkinstalldirs
+Makefile.in
 Makefile

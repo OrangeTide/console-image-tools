@@ -1,4 +1,4 @@
-nesradtools 0.1
+nesradtools 0.3
 ===============
 
 Package Overview
@@ -9,6 +9,11 @@ Package Overview
   pngtochr - takes a PNG of any size and turns it into a CHR file of sprites.
 
   nessplit - takes an iNES file and turns it into a PRG and CHR file.
+
+  nescombine - takes PRG and CHR and creates an iNES file
+
+  ips - applies a .ips patch file to a binary.
+	(limitation: .ips file cannot change the size of the output file)
 
 
 Building & Installation
